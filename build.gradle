@@ -1,0 +1,107 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
+    }
+}
+
+plugins {
+    id "com.jfrog.bintray" version "1.7"
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+
+    ext {
+        androidApplicationId = 'com.zyp.thirdloginlib'
+        androidVersionCode = 1
+        androidVersionName = "1.0.0 beta"
+        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        testApplicationId = 'com.zyp.thirdloginlib.test'
+    }
+}
+
+ext {
+//Android
+    androidBuildToolsVersion = "24.0.1"
+    androidMinSdkVersion = 19
+    androidTargetSdkVersion = 24
+    androidCompileSdkVersion = 24
+
+    javaSourceCompatibility = JavaVersion.VERSION_1_7
+    javaTargetCompatibility = JavaVersion.VERSION_1_7
+
+    multidexVersion = '1.0.1'
+
+//Support Libraries
+    supportVersion = '24.1.1'
+
+    javaxAnnotationVersion = '1.2'
+    annotatedadapterVersion = '1.1.1.1-SNAPSHOT'
+    androidAnnotationsVersion = '20.0.0'
+
+//Injection
+    daggerVersion = '2.2'
+    butterKnifeVersion = '7.0.1'
+
+//http
+    retrofitVersion = '2.1.0'
+    okHttpVersion = '3.4.1'
+    mqttVersion = '1.0.2'
+
+    ksoapVersion = '3.6.0'
+
+//Rxjava
+    rxJavaVersion = '1.1.5'
+    rxAndroidVersion = '1.2.0'
+    rxBindingVersion = '0.4.0'
+    rxpermissionsVersion = '0.5.2'
+
+//image
+    picassoVersion = '2.5.2'
+
+//Json
+    gsonVersion = '2.7'
+
+//Libraries
+    icepickVersion = '3.0.2'
+
+    bouncyCastleVersion = '1.50'
+
+    fragmentargsVersion = '2.1.0'
+    parcelablepleaseVersion = '1.0.1'
+
+    zxingVersion = '3.2.1'
+    nineoldVersion = '2.4.0'
+
+    materialedittextVersion = '2.1.4'
+    progress = '1.7'
+//    materialedittextVersion = '2.1.4'
+//    banner = '2.0.3'
+//    progress = '1.7'
+//    materialpreference = '1.3'
+
+//Testing
+    robolectricVersion = '3.0'
+    jUnitVersion = '4.12'
+    assertJVersion = '1.7.1'
+    dexmakerVersion = '1.0'
+    espressoVersion = '2.2.1'
+    testingSupportLibVersion = '0.1'
+    mockitoVersion = '2.0.5-beta'
+    powermockVersion = '1.6.2'
+    leakcanaryVersion = '1.3.1'
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

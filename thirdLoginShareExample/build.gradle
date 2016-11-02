@@ -1,0 +1,52 @@
+apply plugin: 'com.android.application'
+
+android {
+
+    lintOptions {
+        abortOnError false
+    }
+    def globalConfiguration = rootProject.extensions.getByName("ext")
+
+    compileSdkVersion globalConfiguration.getAt("androidCompileSdkVersion")
+    buildToolsVersion globalConfiguration.getAt("androidBuildToolsVersion")
+
+    defaultConfig {
+        multiDexEnabled true
+        minSdkVersion globalConfiguration.getAt("androidMinSdkVersion")
+        targetSdkVersion globalConfiguration.getAt("androidTargetSdkVersion")
+        applicationId globalConfiguration.getAt("androidApplicationId")
+        versionCode globalConfiguration.getAt("androidVersionCode")
+        versionName globalConfiguration.getAt("androidVersionName")
+        testInstrumentationRunner globalConfiguration.getAt("testInstrumentationRunner")
+        testApplicationId globalConfiguration.getAt("testApplicationId")
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':thirdLoginShareLib')
+    compile "com.android.support:appcompat-v7:${rootProject.ext.supportVersion}"
+    compile 'com.android.support.constraint:constraint-layout:1.0.0+'
+    //数据处理
+    compile "com.google.code.gson:gson:${rootProject.ext.gsonVersion}"
+
+    compile "com.jakewharton:butterknife:${rootProject.ext.butterKnifeVersion}"
+
+    //网络数据获取
+    compile "com.squareup.okhttp3:okhttp:${rootProject.ext.okHttpVersion}"
+    compile "com.squareup.okhttp3:logging-interceptor:${rootProject.ext.okHttpVersion}"
+    compile "com.squareup.retrofit2:retrofit:${rootProject.ext.retrofitVersion}"
+    compile "com.squareup.retrofit2:adapter-rxjava:${rootProject.ext.retrofitVersion}"
+    compile "com.squareup.retrofit2:converter-gson:${rootProject.ext.retrofitVersion}"
+    //RxJava
+    compile "io.reactivex:rxjava:${rootProject.ext.rxJavaVersion}"
+    compile "io.reactivex:rxandroid:${rootProject.ext.rxAndroidVersion}"
+    testCompile 'junit:junit:4.12'
+}

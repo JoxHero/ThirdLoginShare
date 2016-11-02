@@ -1,0 +1,175 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile files('libs/weibosdkcore_release.jar')
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    //数据处理
+    compile 'com.google.code.gson:gson:2.7'
+    //网络数据获取
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    //RxJava
+    compile "io.reactivex:rxjava:${rootProject.ext.rxJavaVersion}"
+    compile "io.reactivex:rxandroid:${rootProject.ext.rxAndroidVersion}"
+    testCompile 'junit:junit:4.12'
+
+    compile files('libs/libammsdk.jar')
+}
+
+group = 'com.joxhero.thirdloginshare'
+version = '0.1'
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name 'libraryuploadtest'
+            description '集成微信、微博、QQ 登录分享功能'
+            url 'https://github.com/googlesamples/easygoogle'
+            inceptionYear '2016'
+
+            packaging 'aar'
+            groupId 'com.joxhero.library'
+            artifactId 'thirdloginsharelib'
+            version '0.1'
+
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+            scm {
+                connection 'https://github.com/googlesamples/easygoogle.git'
+                url 'https://github.com/googlesamples/easygoogle'
+
+            }
+            developers {
+                developer {
+                    name 'Google'
+                }
+            }
+        }
+    }
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        repo = 'ThirdLoginShare'
+        name = 'thirdloginshare'
+        userOrg = 'zhangyongpeng'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/bintray/gradle-bintray-plugin.git'
+        version {
+            name = '0.1'
+            desc = 'Gradle Bintray Plugin 1.0 final'
+            vcsTag = '0.1'
+            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
+        }
+    }
+}
+
+/*
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    android.libraryVariants.all { variant ->
+        println variant.javaCompile.classpath.files
+        if (variant.name == 'release') { //我们只需 release 的 javadoc
+            task("generate${variant.name.capitalize()}Javadoc", type: Javadoc) {
+                // title = ''
+                // description = ''
+                source = variant.javaCompile.source
+                classpath = files(variant.javaCompile.classpath.files, project.android.getBootClasspath())
+                options {
+                    encoding "utf-8"
+                    links "http://docs.oracle.com/javase/7/docs/api/"
+                    linksOffline "http://d.android.com/reference", "${android.sdkDirectory}/docs/reference"
+                }
+                exclude '**//*
+BuildConfig.java'
+                exclude '**//*
+R.java'
+            }
+            task("javadoc${variant.name.capitalize()}Jar", type: Jar, dependsOn: "generate${variant.name.capitalize()}Javadoc") {
+                classifier = 'javadoc'
+                from tasks.getByName("generate${variant.name.capitalize()}Javadoc").destinationDir
+            }
+            artifacts {
+                archives tasks.getByName("javadoc${variant.name.capitalize()}Jar")
+            }
+        }
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+javadoc {
+    options {
+        encoding "UTF-8"
+        charSet 'UTF-8'
+        author true
+        version true
+        links "http://docs.oracle.com/javase/7/docs/api"
+    }
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        name = "thirdloginshare"    //发布到JCenter上的项目名字
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+    }
+}
+*/
