@@ -16,6 +16,8 @@
 
 package com.zyp.thirdloginlib.sina.model;
 
+import com.zyp.thirdloginlib.data.resultModel.AccountResult;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,7 +27,7 @@ import org.json.JSONObject;
  * @author SINA
  * @since 2013-11-24
  */
-public class User {
+public class SinaUser extends AccountResult{
 
     /**
      * 用户UID（int64）
@@ -203,10 +205,159 @@ public class User {
 
     public String block_word;
 
-    public static User parse(String jsonString) {
+
+    public String getId() {
+        return id;
+    }
+
+    public String getIdstr() {
+        return idstr;
+    }
+
+    public String getScreen_name() {
+        return screen_name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getProvince() {
+        return province;
+    }
+
+    public int getCity() {
+        return city;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getProfile_image_url() {
+        return profile_image_url;
+    }
+
+    public String getProfile_url() {
+        return profile_url;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public String getWeihao() {
+        return weihao;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public int getFollowers_count() {
+        return followers_count;
+    }
+
+    public int getFriends_count() {
+        return friends_count;
+    }
+
+    public int getStatuses_count() {
+        return statuses_count;
+    }
+
+    public int getFavourites_count() {
+        return favourites_count;
+    }
+
+    public String getCreated_at() {
+        return created_at;
+    }
+
+    public boolean isFollowing() {
+        return following;
+    }
+
+    public boolean isAllow_all_act_msg() {
+        return allow_all_act_msg;
+    }
+
+    public boolean isGeo_enabled() {
+        return geo_enabled;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public int getVerified_type() {
+        return verified_type;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public boolean isAllow_all_comment() {
+        return allow_all_comment;
+    }
+
+    public String getAvatar_large() {
+        return avatar_large;
+    }
+
+    public String getAvatar_hd() {
+        return avatar_hd;
+    }
+
+    public String getVerified_reason() {
+        return verified_reason;
+    }
+
+    public boolean isFollow_me() {
+        return follow_me;
+    }
+
+    public int getOnline_status() {
+        return online_status;
+    }
+
+    public int getBi_followers_count() {
+        return bi_followers_count;
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public String getStar() {
+        return star;
+    }
+
+    public String getMbtype() {
+        return mbtype;
+    }
+
+    public String getMbrank() {
+        return mbrank;
+    }
+
+    public String getBlock_word() {
+        return block_word;
+    }
+
+    public static SinaUser parse(String jsonString) {
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
-            return User.parse(jsonObject);
+            return SinaUser.parse(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -214,12 +365,12 @@ public class User {
         return null;
     }
 
-    public static User parse(JSONObject jsonObject) {
+    public static SinaUser parse(JSONObject jsonObject) {
         if (null == jsonObject) {
             return null;
         }
 
-        User user = new User();
+        SinaUser user = new SinaUser();
         user.id = jsonObject.optString("id", "");
         user.idstr = jsonObject.optString("idstr", "");
         user.screen_name = jsonObject.optString("screen_name", "");

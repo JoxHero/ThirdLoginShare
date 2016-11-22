@@ -15,6 +15,8 @@ import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.tencent.tauth.Tencent;
 import com.zyp.thirdloginlib.ShareBlock;
 import com.zyp.thirdloginlib.common.ShareConstants;
+import com.zyp.thirdloginlib.data.resultModel.AccountResult;
+import com.zyp.thirdloginlib.data.resultModel.WeChartUserInfoResult;
 import com.zyp.thirdloginlib.impl.ILoginManager;
 import com.zyp.thirdloginlib.impl.IShareManager;
 import com.zyp.thirdloginlib.impl.PlatformActionListener;
@@ -22,8 +24,10 @@ import com.zyp.thirdloginlib.impl.ShareContentText;
 import com.zyp.thirdloginlib.impl.ShareContentWebpage;
 import com.zyp.thirdloginlib.qq.QQLoginManager;
 import com.zyp.thirdloginlib.qq.QQShareManager;
+import com.zyp.thirdloginlib.qq.model.QQUser;
 import com.zyp.thirdloginlib.sina.WeiboLoginManager;
 import com.zyp.thirdloginlib.sina.WeiboShareManager;
+import com.zyp.thirdloginlib.sina.model.SinaUser;
 import com.zyp.thirdloginlib.wechart.WechatLoginManager;
 import com.zyp.thirdloginlib.wechart.WechatShareManager;
 
@@ -53,8 +57,6 @@ public class MainActivity extends AppCompatActivity {
     TextView tvContent;
     @Bind(R.id.activity_main)
     ConstraintLayout activityMain;
-    private SsoHandler mSsoHandler;
-    private PlatformActionListener qqLoginResultListener;
     private QQLoginManager qqLoginManager;
     private QQShareManager qqShareManager;
 
@@ -63,27 +65,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        initBlock();
+    }
 
+    private void initBlock() {
         ShareBlock.getInstance().initWeibo(Constants.SINA_KEY);
-
-        //初始化微博回调地址
         ShareBlock.getInstance().initWeiboRedriectUrl(Constants.SINA_REDIRECT_URL);
-
         ShareBlock.getInstance().initQQ(Constants.QQ_APP_ID);
-
-        ShareBlock.getInstance().initWechat(Constants.WECHAT_APP_ID,Constants.WECHAT_SECRET);
+        ShareBlock.getInstance().initWechat(Constants.WECHAT_APP_ID, Constants.WECHAT_SECRET);
     }
 
     @OnClick({R.id.bt_sina_login, R.id.bt_sina_share, R.id.bt_qq_login, R.id.bt_qq_share, R.id.bt_wechart_login, R.id.bt_wechart_share})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.bt_sina_login:
+
                 ILoginManager sinaLoginManager = new WeiboLoginManager(this);
                 sinaLoginManager.login(new PlatformActionListener() {
                     @Override
-                    public void onComplete(HashMap<String, Object> userInfo) {
-                        Log.d(TAG, "onComplete: weibo login resutl " + userInfo.get(ShareConstants.PARAMS_NICK_NAME));
-                        tvContent.setText("昵称 ：" + userInfo.get(ShareConstants.PARAMS_NICK_NAME));
+                    public void onComplete(AccountResult accountResult) {
+                        SinaUser sinaUser = (SinaUser) accountResult;
+                        Log.d(TAG, "onComplete: weibo login resutl " + sinaUser.getName());
+                        tvContent.setText("昵称 ：" + sinaUser.getName());
                     }
 
                     @Override
@@ -104,12 +107,14 @@ public class MainActivity extends AppCompatActivity {
                 sinaShareManager.share(new ShareContentText("test"), WeiboShareManager.WEIBO_SHARE_TYPE);
                 break;
             case R.id.bt_qq_login:
+
                 qqLoginManager = new QQLoginManager(this);
                 qqLoginManager.login(new PlatformActionListener() {
                     @Override
-                    public void onComplete(HashMap<String, Object> userInfo) {
+                    public void onComplete(AccountResult accountResult) {
                         Log.d(TAG, "onComplete: qq login resutl ");
-                        tvContent.setText("昵称 ：" + userInfo.get(ShareConstants.PARAMS_NICK_NAME));
+                        QQUser qqUser = (QQUser) accountResult;
+                        tvContent.setText("昵称 ：" + qqUser.getNickname());
                     }
 
                     @Override
@@ -124,17 +129,20 @@ public class MainActivity extends AppCompatActivity {
                 });
                 break;
             case R.id.bt_qq_share:
+
                 qqShareManager = new QQShareManager(this);
-                qqShareManager.share( new ShareContentWebpage("英语流利说", "test", "http://www.liulishuo.com",
+                qqShareManager.share(new ShareContentWebpage("英语流利说", "test", "http://www.liulishuo.com",
                         getImagePath(view)), QQShareManager.QZONE_SHARE_TYPE);
                 break;
             case R.id.bt_wechart_login:
+
                 ILoginManager wechatLoginManager = new WechatLoginManager(this);
                 wechatLoginManager.login(new PlatformActionListener() {
                     @Override
-                    public void onComplete(HashMap<String, Object> userInfo) {
+                    public void onComplete(AccountResult accountResult) {
                         Log.d(TAG, "onComplete: wechat login resutl ");
-                        tvContent.setText("昵称 ：" + userInfo.get(ShareConstants.PARAMS_NICK_NAME));
+                        WeChartUserInfoResult weChartUserInfoResult = (WeChartUserInfoResult) accountResult;
+                        tvContent.setText("昵称 ：" + weChartUserInfoResult.getNickname());
                     }
 
                     @Override
@@ -149,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 });
                 break;
             case R.id.bt_wechart_share:
+
                 IShareManager wechtShareManager = new WechatShareManager(this);
                 wechtShareManager.share(new ShareContentText("test"), WechatShareManager.WEIXIN_SHARE_TYPE_TALK);
                 break;
@@ -158,15 +167,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == com.tencent.connect.common.Constants.REQUEST_LOGIN ) {
+        if (requestCode == com.tencent.connect.common.Constants.REQUEST_LOGIN) {
             Tencent.onActivityResultData(requestCode, resultCode, data, qqLoginManager.getIuListener());
-            //qqLoginManager.getTencent().handleLoginData(data,qqLoginManager.getIuListener());
         }
-
-        /*if(requestCode == com.tencent.connect.common.Constants.REQUEST_QQ_SHARE ||
-                requestCode == com.tencent.connect.common.Constants.REQUEST_QZONE_SHARE){
-            qqShareManager.getTencent().onActivityResult(requestCode, resultCode, data);
-        }*/
     }
 
     /**

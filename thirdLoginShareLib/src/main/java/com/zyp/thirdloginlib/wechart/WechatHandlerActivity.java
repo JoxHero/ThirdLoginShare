@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
-import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.zyp.thirdloginlib.R;
@@ -17,20 +16,14 @@ import com.zyp.thirdloginlib.ShareBlock;
 import com.zyp.thirdloginlib.common.ShareConstants;
 import com.zyp.thirdloginlib.data.ServiceManager;
 import com.zyp.thirdloginlib.data.resultModel.AccessTokenResult;
-import com.zyp.thirdloginlib.data.resultModel.UserInfoResult;
+import com.zyp.thirdloginlib.data.resultModel.WeChartUserInfoResult;
 import com.zyp.thirdloginlib.impl.PlatformActionListener;
 import com.zyp.thirdloginlib.util.SubscribeUtils;
 
 
-import org.json.JSONObject;
-
 import java.util.HashMap;
 
-import retrofit2.Response;
-import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 
 import static android.content.ContentValues.TAG;
 
@@ -157,7 +150,7 @@ public class WechatHandlerActivity extends Activity implements IWXAPIEventHandle
 
     private void getUserInfo(String accessToken, String openid) {
         SubscribeUtils.applySchedulers(ServiceManager.getWeChatApiService().getWechatUserInfo(accessToken, openid))
-                .subscribe(new Subscriber<UserInfoResult>() {
+                .subscribe(new Subscriber<WeChartUserInfoResult>() {
                     @Override
                     public void onCompleted() {
 
@@ -173,8 +166,8 @@ public class WechatHandlerActivity extends Activity implements IWXAPIEventHandle
                     }
 
                     @Override
-                    public void onNext(UserInfoResult userInfoResult) {
-                        HashMap<String, Object> userInfoHashMap
+                    public void onNext(WeChartUserInfoResult userInfoResult) {
+                        /*HashMap<String, Object> userInfoHashMap
                                 = new HashMap<String, Object>();
                         userInfoHashMap
                                 .put(ShareConstants.PARAMS_NICK_NAME,
@@ -187,11 +180,11 @@ public class WechatHandlerActivity extends Activity implements IWXAPIEventHandle
                                         userInfoResult.getHeadimgurl());
                         userInfoHashMap
                                 .put(ShareConstants.PARAMS_USERID,
-                                        userInfoResult.getUnionid());
+                                        userInfoResult.getUnionid());*/
                         if (mPlatformActionListener != null) {
                             mPlatformActionListener
                                     .onComplete(
-                                            userInfoHashMap);
+                                            userInfoResult);
                         }
                     }
                 });

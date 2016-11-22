@@ -5,6 +5,8 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.IUiListener;
@@ -14,10 +16,12 @@ import com.zyp.thirdloginlib.ShareBlock;
 import com.zyp.thirdloginlib.common.ShareConstants;
 import com.zyp.thirdloginlib.impl.ILoginManager;
 import com.zyp.thirdloginlib.impl.PlatformActionListener;
+import com.zyp.thirdloginlib.qq.model.QQUser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ObjectStreamException;
 import java.util.HashMap;
 
 /**
@@ -25,14 +29,14 @@ import java.util.HashMap;
  */
 public class QQLoginManager implements ILoginManager {
 
-    private  final String TAG = "QQLoginManager";
-    private  Context mContext;
+    private final String TAG = "QQLoginManager";
+    private Context mContext;
 
-    private  String mAppId;
+    private String mAppId;
 
-    private  Tencent mTencent;
+    private Tencent mTencent;
 
-    protected  PlatformActionListener mPlatformActionListener;
+    protected PlatformActionListener mPlatformActionListener;
 
     public QQLoginManager(Context context) {
         mContext = context;
@@ -42,7 +46,7 @@ public class QQLoginManager implements ILoginManager {
         }
     }
 
-    private  void initOpenidAndToken(JSONObject jsonObject) {
+    private void initOpenidAndToken(JSONObject jsonObject) {
         try {
             String token = jsonObject.getString(Constants.PARAM_ACCESS_TOKEN);
             String expires = jsonObject.getString(Constants.PARAM_EXPIRES_IN);
@@ -59,7 +63,7 @@ public class QQLoginManager implements ILoginManager {
     @Override
     public void login(PlatformActionListener platformActionListener) {
 
-        if(mTencent == null){
+        if (mTencent == null) {
             return;
         }
 
@@ -73,15 +77,15 @@ public class QQLoginManager implements ILoginManager {
         }
     }
 
-    public  IUiListener getIuListener(){
+    public IUiListener getIuListener() {
         return iUiListener;
     }
 
-    public  Tencent getTencent(){
+    public Tencent getTencent() {
         return mTencent;
     }
 
-   public  IUiListener iUiListener =  new IUiListener() {
+    public IUiListener iUiListener = new IUiListener() {
         @Override
         public void onComplete(Object object) {
             JSONObject jsonObject = (JSONObject) object;
@@ -90,10 +94,10 @@ public class QQLoginManager implements ILoginManager {
             info.getUserInfo(new IUiListener() {
                 @Override
                 public void onComplete(Object object) {
-
                     try {
                         JSONObject jsonObject = (JSONObject) object;
-                        HashMap<String, Object> userInfoHashMap
+                        Log.d(TAG, "onComplete: " + object.toString());
+                       /* HashMap<String, Object> userInfoHashMap
                                 = new HashMap<String, Object>();
                         userInfoHashMap.put(ShareConstants.PARAMS_NICK_NAME,
                                 jsonObject.getString("nickname"));
@@ -102,25 +106,32 @@ public class QQLoginManager implements ILoginManager {
                         userInfoHashMap.put(ShareConstants.PARAMS_IMAGEURL,
                                 jsonObject.getString("figureurl_qq_2"));
                         userInfoHashMap
-                                .put(ShareConstants.PARAMS_USERID, mTencent.getOpenId());
-
+                                .put(ShareConstants.PARAMS_USERID, mTencent.getOpenId());*/
+                        Gson gson = new Gson();
+                        QQUser qqUser = gson.fromJson(jsonObject.toString(), QQUser.class);
                         if (mPlatformActionListener != null) {
-                            mPlatformActionListener
-                                    .onComplete(userInfoHashMap);
+                            if (qqUser != null) {
+                                mPlatformActionListener
+                                        .onComplete(qqUser);
+                            } else {
+                                Log.d(TAG, "QQUser is null!");
+                                mPlatformActionListener.onError();
+                            }
                         }
-
-                    } catch (JSONException e) {
+                    } catch (JsonSyntaxException e) {
                         e.printStackTrace();
                         if (mPlatformActionListener != null) {
                             mPlatformActionListener
                                     .onError();
                         }
                     }
+
+
                 }
 
                 @Override
                 public void onError(UiError uiError) {
-                    Log.d(TAG, "mTencent.login onError: "+uiError.errorMessage);
+                    Log.d(TAG, "mTencent.login onError: " + uiError.errorMessage);
                     if (mPlatformActionListener != null) {
                         mPlatformActionListener
                                 .onError();

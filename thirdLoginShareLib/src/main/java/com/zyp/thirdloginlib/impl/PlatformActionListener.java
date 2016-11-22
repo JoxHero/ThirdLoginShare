@@ -1,5 +1,7 @@
 package com.zyp.thirdloginlib.impl;
 
+import com.zyp.thirdloginlib.data.resultModel.AccountResult;
+
 import java.util.HashMap;
 
 /**
@@ -9,9 +11,8 @@ public interface PlatformActionListener {
 
     /**
      * 登录成功
-     * @param userInfo
      */
-    void onComplete(HashMap<String, Object> userInfo);
+    void onComplete(AccountResult accountResult);
 
     /**
      * 登录失败

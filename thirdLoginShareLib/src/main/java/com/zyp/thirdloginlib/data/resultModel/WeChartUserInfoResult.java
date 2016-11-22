@@ -6,7 +6,7 @@ import java.util.List;
  * Created by zyp on 2016/10/11.
  */
 
-public class UserInfoResult {
+public class WeChartUserInfoResult extends AccountResult{
     /**
      * openid : OPENID
      * nickname : NICKNAME

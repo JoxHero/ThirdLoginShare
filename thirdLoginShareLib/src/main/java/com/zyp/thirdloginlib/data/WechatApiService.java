@@ -2,9 +2,8 @@ package com.zyp.thirdloginlib.data;
 
 
 import com.zyp.thirdloginlib.data.resultModel.AccessTokenResult;
-import com.zyp.thirdloginlib.data.resultModel.UserInfoResult;
+import com.zyp.thirdloginlib.data.resultModel.WeChartUserInfoResult;
 
-import okhttp3.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import rx.Observable;
@@ -30,8 +29,8 @@ public interface WechatApiService {
      * @return
      */
     @GET("/sns/userinfo")
-    Observable<UserInfoResult> getWechatUserInfo(@Path("access_token") String accessToken,
-                                                 @Path("openid") String openid);
+    Observable<WeChartUserInfoResult> getWechatUserInfo(@Path("access_token") String accessToken,
+                                                        @Path("openid") String openid);
 
 
 }

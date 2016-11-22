@@ -16,7 +16,7 @@ import com.zyp.thirdloginlib.ShareBlock;
 import com.zyp.thirdloginlib.common.ShareConstants;
 import com.zyp.thirdloginlib.impl.ILoginManager;
 import com.zyp.thirdloginlib.impl.PlatformActionListener;
-import com.zyp.thirdloginlib.sina.model.User;
+import com.zyp.thirdloginlib.sina.model.SinaUser;
 import com.zyp.thirdloginlib.sina.model.UsersAPI;
 
 import java.util.HashMap;
@@ -41,7 +41,7 @@ public class WeiboLoginManager implements ILoginManager {
     private PlatformActionListener mPlatformActionListener;
 
 
-    private String mRedirectUrl ;
+    private String mRedirectUrl;
 
 
     /**
@@ -78,7 +78,6 @@ public class WeiboLoginManager implements ILoginManager {
      * * 1. SSO 授权时，需要在 onActivityResult 中调用 {@link SsoHandler#authorizeCallBack} 后，
      * 该回调才会被执行。
      * 2. 非SSO 授权时，当授权结束后，该回调就会被执行
-     *
      */
     private class AuthListener implements WeiboAuthListener {
 
@@ -89,7 +88,7 @@ public class WeiboLoginManager implements ILoginManager {
                 AccessTokenKeeper.writeAccessToken(mContext, accessToken);
                 userAPI = new UsersAPI(mContext, mSinaAppKey, accessToken);
                 userAPI.show(Long.parseLong(accessToken.getUid()), mListener);
-            }else {
+            } else {
                 // 当您注册的应用程序签名不正确时，就会收到错误Code，请确保签名正确
                 String code = values.getString("code", "");
             }
@@ -115,22 +114,26 @@ public class WeiboLoginManager implements ILoginManager {
         public void onComplete(String response) {
             if (!TextUtils.isEmpty(response)) {
 
-                // 调用 User#parse 将JSON串解析成User对象
-                User user = User.parse(response);
+                // 调用 SinaUser#parse 将JSON串解析成User对象
+                SinaUser user = SinaUser.parse(response);
                 if (user != null) {
-                    HashMap<String, Object> userInfoHashMap
+                   /* HashMap<String, Object> userInfoHashMap
                             = new HashMap<String, Object>();
                     userInfoHashMap.put(ShareConstants.PARAMS_NICK_NAME, user.name);
                     userInfoHashMap.put(ShareConstants.PARAMS_SEX, user.gender);
                     userInfoHashMap.put(ShareConstants.PARAMS_IMAGEURL, user.avatar_large);
                     userInfoHashMap.put(ShareConstants.PARAMS_USERID, user.id);
                     userInfoHashMap.put(ShareConstants.PARAMS_DESCRIPTION,user.description);
-                    userInfoHashMap.put(ShareConstants.PARAMS_LOCATION,user.location);
+                    userInfoHashMap.put(ShareConstants.PARAMS_LOCATION,user.location);*/
                     if (mPlatformActionListener != null) {
-                        mPlatformActionListener.onComplete(userInfoHashMap);
+                        mPlatformActionListener.onComplete(user);
+                    }
+                } else {
+                    if (mPlatformActionListener != null) {
+                        mPlatformActionListener.onError();
                     }
                 }
-        }
+            }
 
         }
 
