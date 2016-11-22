@@ -8,14 +8,12 @@
 ####2.初始化微博回调地址
        ShareBlock.getInstance().initWeiboRedriectUrl(weiboRedriectUrl);
 ####3.分享到微信
-       ```Java
        IShareManager iShareManager = new WechatShareManager(context);
        iShareManager.share(new ShareContentWebpage("title", "content", "dataUrl",
        "imageUrl",WechatShareManager.WEIXIN_SHARE_TYPE_TALK);
-       ```
   
 ####4.微信登录
-```Java
+
   ILoginManager iLoginManager = new WechatLoginManager
                         (MainActivity.this);
                 iLoginManager.login(new PlatformActionListener() {
@@ -34,17 +32,17 @@
                         //TODO
                     }
                 });
-		```
+		
        
 ##二.gradle配置    
-allprojects {
+     allprojects {
 		repositories {
 			...
 			maven { url "https://jitpack.io" }
 		}
 	}
   
-  dependencies {
+     dependencies {
 	        compile 'com.github.JoxHero:ThirdLoginShare:v1.0'
 	}
   
