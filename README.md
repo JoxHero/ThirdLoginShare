@@ -1,6 +1,6 @@
  
 ##一.简介
-  ThirdLoginShare这个库是基于[ShareLoginLib](https://github.com/lingochamp/ShareLoginLib) 上修改的，因为ShareLoginLib 里面用的三方jar比较老，并且用到的三方库版本也较老。
+  ThirdLoginShare这个库是基于[ShareLoginLib](https://github.com/lingochamp/ShareLoginLib) 上修改的，因为ShareLoginLib 里面用的三方jar比较老，并且用到的三方库版本也较老，所以我在这基础上修改了一下库，并且修改了对应的代码。
   
 ####1.初始化申请的第三方key
        ShareBlock.getInstance().initShare(wechatAppid, weiboId, qqId,wechatSecret);
