@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(AccountResult accountResult) {
                         SinaUser sinaUser = (SinaUser) accountResult;
                         Log.d(TAG, "onComplete: weibo login resutl " + sinaUser.getName());
+                        Log.d(TAG,"uid "+sinaUser.getAccessToken().getUid());
                         tvContent.setText("昵称 ：" + sinaUser.getName());
                     }
 

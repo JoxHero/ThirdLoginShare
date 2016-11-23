@@ -49,6 +49,7 @@ public class WeiboLoginManager implements ILoginManager {
      */
     private static SsoHandler mSsoHandler;
     private Gson gson;
+    private Oauth2AccessToken accessToken;
 
     public WeiboLoginManager(Context context) {
 
@@ -83,7 +84,7 @@ public class WeiboLoginManager implements ILoginManager {
 
         @Override
         public void onComplete(Bundle values) {
-            final Oauth2AccessToken accessToken = Oauth2AccessToken.parseAccessToken(values);
+            accessToken = Oauth2AccessToken.parseAccessToken(values);
             if (accessToken != null && accessToken.isSessionValid()) {
                 AccessTokenKeeper.writeAccessToken(mContext, accessToken);
                 userAPI = new UsersAPI(mContext, mSinaAppKey, accessToken);
@@ -117,6 +118,9 @@ public class WeiboLoginManager implements ILoginManager {
                 // 调用 SinaUser#parse 将JSON串解析成User对象
                 SinaUser user = SinaUser.parse(response);
                 if (user != null) {
+                    if(accessToken != null){
+                        user.setAccessToken(accessToken);
+                    }
                    /* HashMap<String, Object> userInfoHashMap
                             = new HashMap<String, Object>();
                     userInfoHashMap.put(ShareConstants.PARAMS_NICK_NAME, user.name);

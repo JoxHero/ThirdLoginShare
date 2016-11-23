@@ -16,6 +16,7 @@
 
 package com.zyp.thirdloginlib.sina.model;
 
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.zyp.thirdloginlib.data.resultModel.AccountResult;
 
 import org.json.JSONException;
@@ -204,6 +205,7 @@ public class SinaUser extends AccountResult{
     public String mbrank;
 
     public String block_word;
+    private Oauth2AccessToken accessToken;
 
 
     public String getId() {
@@ -412,5 +414,13 @@ public class SinaUser extends AccountResult{
         user.block_word = jsonObject.optString("block_word", "");
 
         return user;
+    }
+
+    public Oauth2AccessToken getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(Oauth2AccessToken accessToken) {
+        this.accessToken = accessToken;
     }
 }
