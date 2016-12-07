@@ -25,7 +25,6 @@ public class QQUser extends AccountResult {
     private String yellow_vip_level;
     private String level;
     private String is_yellow_year_vip;
-    private
 
     public int getRet() {
         return ret;
