@@ -51,7 +51,7 @@ public class UsersAPI extends AbsOpenAPI {
 
     /**
      * 根据用户ID获取用户信息。
-     * 
+     *
      * @param uid      需要查询的用户ID
      * @param listener 异步请求回调接口
      */

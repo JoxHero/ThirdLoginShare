@@ -108,6 +108,7 @@ public class QQLoginManager implements ILoginManager {
                         userInfoHashMap
                                 .put(ShareConstants.PARAMS_USERID, mTencent.getOpenId());*/
                         Gson gson = new Gson();
+
                         QQUser qqUser = gson.fromJson(jsonObject.toString(), QQUser.class);
                         if (mPlatformActionListener != null) {
                             if (qqUser != null) {

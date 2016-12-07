@@ -31,7 +31,7 @@ import static android.content.ContentValues.TAG;
  * Created by echo on 5/19/15.
  */
 public class WechatHandlerActivity extends Activity implements IWXAPIEventHandler {
-
+    public static String TAG = "jox";
     private IWXAPI mIWXAPI;
 
     private PlatformActionListener mPlatformActionListener;
@@ -74,13 +74,13 @@ public class WechatHandlerActivity extends Activity implements IWXAPIEventHandle
 
     @Override
     public void onResp(BaseResp resp) {
-
+        Log.d(TAG, "onResp: ");
 
         mPlatformActionListener = WechatLoginManager
                 .getPlatformActionListener();
         switch (resp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
-
+                Log.d(TAG, "onResp: ERR_OK");
                 if (resp.getType() == TYPE_LOGIN) {
                     getAccessToken(resp, mPlatformActionListener);
 
@@ -141,6 +141,7 @@ public class WechatHandlerActivity extends Activity implements IWXAPIEventHandle
 
             @Override
             public void onNext(AccessTokenResult accessTokenResult) {
+                Log.d(TAG, "getAccessToken : onNext ");
                 String accessToken = accessTokenResult.getAccess_token();
                 String openid = accessTokenResult.getOpenid();
                 getUserInfo(accessToken, openid);
@@ -167,20 +168,7 @@ public class WechatHandlerActivity extends Activity implements IWXAPIEventHandle
 
                     @Override
                     public void onNext(WeChartUserInfoResult userInfoResult) {
-                        /*HashMap<String, Object> userInfoHashMap
-                                = new HashMap<String, Object>();
-                        userInfoHashMap
-                                .put(ShareConstants.PARAMS_NICK_NAME,
-                                        userInfoResult.getNickname());
-                        userInfoHashMap
-                                .put(ShareConstants.PARAMS_SEX,
-                                        userInfoResult.getSex());
-                        userInfoHashMap
-                                .put(ShareConstants.PARAMS_IMAGEURL,
-                                        userInfoResult.getHeadimgurl());
-                        userInfoHashMap
-                                .put(ShareConstants.PARAMS_USERID,
-                                        userInfoResult.getUnionid());*/
+                        Log.d(TAG, "getUserInfo onNext: ");
                         if (mPlatformActionListener != null) {
                             mPlatformActionListener
                                     .onComplete(
