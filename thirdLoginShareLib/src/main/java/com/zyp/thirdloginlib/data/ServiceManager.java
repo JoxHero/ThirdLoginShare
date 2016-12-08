@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class ServiceManager {
-    private static final String endPoint = "https://api.weixin.qq.com/";
+    private static final String endPoint = "https://api.weixin.qq.com";
 
     public static <T> T createRestService(String endPoint, OkHttpClient restClient, Class<T> service) {
         Retrofit serviceAdapter = new Retrofit.Builder()

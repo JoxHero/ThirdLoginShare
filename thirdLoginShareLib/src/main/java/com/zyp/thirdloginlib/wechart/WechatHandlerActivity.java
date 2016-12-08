@@ -9,12 +9,14 @@ import android.widget.Toast;
 
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
+import com.tencent.mm.sdk.modelmsg.SendAuth;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.zyp.thirdloginlib.R;
 import com.zyp.thirdloginlib.ShareBlock;
 import com.zyp.thirdloginlib.common.ShareConstants;
 import com.zyp.thirdloginlib.data.ServiceManager;
+import com.zyp.thirdloginlib.data.WechatApiService;
 import com.zyp.thirdloginlib.data.resultModel.AccessTokenResult;
 import com.zyp.thirdloginlib.data.resultModel.WeChartUserInfoResult;
 import com.zyp.thirdloginlib.impl.PlatformActionListener;
@@ -22,6 +24,7 @@ import com.zyp.thirdloginlib.util.SubscribeUtils;
 
 
 import java.util.HashMap;
+import java.util.Map;
 
 import rx.Subscriber;
 
@@ -120,11 +123,15 @@ public class WechatHandlerActivity extends Activity implements IWXAPIEventHandle
     }
 
     private void getAccessToken(BaseResp resp, final PlatformActionListener platformActionListener) {
-        SubscribeUtils.applySchedulers(ServiceManager.getWeChatApiService().getAccessToken(ShareBlock.getInstance().getWechatAppId(),
-                ShareBlock.getInstance().getWechatAppId(),
-                resp.errCode,
-                resp.errCode
-        )).subscribe(new Subscriber<AccessTokenResult>() {
+        final String code = ((SendAuth.Resp) resp).code;
+        WechatApiService service = ServiceManager.getWeChatApiService();
+        Map<String, Object> options = new HashMap<>();
+        options.put("appid", ShareBlock.getInstance().getWechatAppId());
+        options.put("secret", ShareBlock.getInstance().getWechatSecret());
+        options.put("code", code);
+        options.put("grant_type", "authorization_code");
+        SubscribeUtils.applySchedulers(service.getAccessToken(options))
+                .subscribe(new Subscriber<AccessTokenResult>() {
             @Override
             public void onCompleted() {
 
@@ -150,7 +157,10 @@ public class WechatHandlerActivity extends Activity implements IWXAPIEventHandle
     }
 
     private void getUserInfo(String accessToken, String openid) {
-        SubscribeUtils.applySchedulers(ServiceManager.getWeChatApiService().getWechatUserInfo(accessToken, openid))
+        Map<String, Object> options = new HashMap<>();
+        options.put("access_token",accessToken);
+        options.put("openid",openid);
+        SubscribeUtils.applySchedulers(ServiceManager.getWeChatApiService().getWechatUserInfo(options))
                 .subscribe(new Subscriber<WeChartUserInfoResult>() {
                     @Override
                     public void onCompleted() {
