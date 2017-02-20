@@ -106,7 +106,6 @@ public class WechatShareManager implements IShareManager {
         sendShare(shareContent.getImageUrl(), req);
     }
 
-
     private void shareWebPage(final int shareType, final ShareContent shareContent) {
         WXWebpageObject webpage = new WXWebpageObject();
         webpage.webpageUrl = shareContent.getURL();
@@ -118,7 +117,11 @@ public class WechatShareManager implements IShareManager {
         req.transaction = ShareUtil.buildTransaction("webpage");
         req.message = msg;
         req.scene = shareType;
-        sendShare(shareContent.getImageUrl(), req);
+        if (shareContent.getImageUrl() != null){
+            sendShare(shareContent.getImageUrl(), req);
+        }else if (shareContent.getImageBitMap() != null){
+            sendShare(shareContent.getImageBitMap(),req);
+        }
     }
 
 
@@ -177,5 +180,28 @@ public class WechatShareManager implements IShareManager {
             }
         }).start();
     }
+
+    private void sendShare(final Bitmap bitmap, final SendMessageToWX.Req req) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //Bitmap image = BitmapUtil.getBitmapFromUrl(imageUrl);
+                    if (bitmap != null) {
+                        // todo image.length <= 10485760
+                        if (req.message.mediaObject instanceof WXImageObject) {
+                            req.message.mediaObject = new WXImageObject(bitmap);
+                        }
+                        req.message.thumbData = ShareUtil.bmpToByteArray(BitmapUtil.scaleCenterCrop(bitmap, THUMB_SIZE, THUMB_SIZE));
+                    }
+                    // 就算图片没有了 尽量能发出分享
+                    mIWXAPI.sendReq(req);
+                } catch (Throwable throwable) {
+
+                }
+            }
+        }).start();
+    }
+
 
 }

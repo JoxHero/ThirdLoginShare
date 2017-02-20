@@ -1,6 +1,8 @@
 package com.zyp.thirdloginlib.impl;
 
 
+import android.graphics.Bitmap;
+
 import com.zyp.thirdloginlib.common.ShareConstants;
 
 /**
@@ -37,6 +39,11 @@ public class ShareContentPic extends ShareContent {
 
     @Override
     public String getMusicUrl() {
+        return null;
+    }
+
+    @Override
+    public Bitmap getImageBitMap() {
         return null;
     }
 

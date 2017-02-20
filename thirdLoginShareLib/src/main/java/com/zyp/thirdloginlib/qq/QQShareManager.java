@@ -25,7 +25,7 @@ import java.util.ArrayList;
 public class QQShareManager implements IShareManager {
     private  final String TAG = "QQShareManager";
     public static final int QZONE_SHARE_TYPE = 0;
-
+    public static final int QQ_SHARE_TYPE = 1;
 
     private String mAppId;
 
@@ -49,12 +49,21 @@ public class QQShareManager implements IShareManager {
         return mTencent;
     }
 
-    private void shareWebPage(Activity activity, ShareContent shareContent) {
+    private void shareWebPageToQQ(Activity activity, ShareContent shareContent) {
         Bundle params = new Bundle();
-        shareWebPageQzone(activity, shareContent, params);
+        params.putString(QQShare.SHARE_TO_QQ_TITLE, shareContent.getTitle());
+        params.putString(QQShare.SHARE_TO_QQ_SUMMARY, shareContent.getContent());
+        params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE,
+                QQShare.SHARE_TO_QQ_TYPE_APP);
+        params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, shareContent.getURL());
+        ArrayList<String> imageUrls = new ArrayList<String>();
+        imageUrls.add(shareContent.getImageUrl());
+        params.putStringArrayList(QQShare.SHARE_TO_QQ_IMAGE_URL, imageUrls);
+        doShareToQQ(activity, params);
     }
 
-    private void shareWebPageQzone(Activity activity, ShareContent shareContent, Bundle params) {
+    private void shareWebPageToQZone(Activity activity, ShareContent shareContent) {
+        Bundle params = new Bundle();
         params.putString(QzoneShare.SHARE_TO_QQ_TITLE, shareContent.getTitle());
         params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, shareContent.getContent());
         params.putInt(QzoneShare.SHARE_TO_QZONE_KEY_TYPE,
@@ -63,23 +72,7 @@ public class QQShareManager implements IShareManager {
         ArrayList<String> imageUrls = new ArrayList<String>();
         imageUrls.add(shareContent.getImageUrl());
         params.putStringArrayList(QzoneShare.SHARE_TO_QQ_IMAGE_URL, imageUrls);
-        doShareToQQ(activity, params);
-
-        /*if(shareContent.getTitle() != null){
-            params.putString(QQShare.SHARE_TO_QQ_TITLE, shareContent.getTitle());
-        }
-        if(shareContent.getURL() != null){
-            params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, shareContent.getURL());
-        }
-        if(shareContent.getContent() != null){
-            params.putString(QQShare.SHARE_TO_QQ_SUMMARY, shareContent.getContent());
-        }
-        if(shareContent.getImageUrl() != null){
-            params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, shareContent.getImageUrl());
-        }
-        params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
-        doShareToQQ(activity, params);*/
-
+        doShareToQZone(activity, params);
     }
 
 
@@ -92,8 +85,24 @@ public class QQShareManager implements IShareManager {
         ThreadManager.getMainHandler().post(new Runnable() {
             @Override
             public void run() {
-                if (mQQShare != null) {
-                    mQQShare.shareToQQ(activity, params, iUiListener);
+                if (mTencent != null) {
+                    mTencent.shareToQQ(activity, params, iUiListener);
+                }
+            }
+        });
+    }
+
+    /**
+     * 用异步方式启动分享
+     * @param params
+     */
+    private void doShareToQZone(final Activity activity, final Bundle params) {
+        // QQ分享要在主线程做
+        ThreadManager.getMainHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                if (mTencent != null) {
+                    mTencent.shareToQzone(activity, params, iUiListener);
                 }
             }
         });
@@ -124,6 +133,15 @@ public class QQShareManager implements IShareManager {
     @Override
     public void share(ShareContent shareContent, int shareType) {
 
-        shareWebPage((Activity) mContext, shareContent);
+        switch (shareType){
+            case QQ_SHARE_TYPE :
+                shareWebPageToQQ((Activity) mContext, shareContent);
+                break;
+            case QZONE_SHARE_TYPE :
+                shareWebPageToQZone((Activity) mContext, shareContent);
+                break;
+            default:
+                break;
+        }
     }
 }

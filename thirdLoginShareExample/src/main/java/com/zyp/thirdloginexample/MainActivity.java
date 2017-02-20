@@ -2,6 +2,7 @@ package com.zyp.thirdloginexample;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         ShareBlock.getInstance().initWechat(Constants.WECHAT_APP_ID, Constants.WECHAT_SECRET);
     }
 
-    @OnClick({R.id.bt_sina_login, R.id.bt_sina_share, R.id.bt_qq_login, R.id.bt_qq_share, R.id.bt_wechart_login, R.id.bt_wechart_share})
+    @OnClick({R.id.bt_sina_login, R.id.bt_sina_share, R.id.bt_qq_login, R.id.bt_qq_share, R.id.bt_qq_qzone_share,R.id.bt_wechart_login, R.id.bt_wechart_share})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.bt_sina_login:
@@ -130,10 +131,14 @@ public class MainActivity extends AppCompatActivity {
                 });
                 break;
             case R.id.bt_qq_share:
-
                 qqShareManager = new QQShareManager(this);
                 qqShareManager.share(new ShareContentWebpage("英语流利说", "test", "http://www.liulishuo.com",
-                        getImagePath(view)), QQShareManager.QZONE_SHARE_TYPE);
+                        "http://img.zlw.com/avatar/2017/01/18/148472941515.png",null), QQShareManager.QQ_SHARE_TYPE);
+                break;
+            case R.id.bt_qq_qzone_share:
+                qqShareManager = new QQShareManager(this);
+                qqShareManager.share(new ShareContentWebpage("英语流利说", "test", "http://www.liulishuo.com",
+                        "http://img.zlw.com/avatar/2017/01/18/148472941515.png",null), QQShareManager.QZONE_SHARE_TYPE);
                 break;
             case R.id.bt_wechart_login:
 
@@ -158,9 +163,10 @@ public class MainActivity extends AppCompatActivity {
                 });
                 break;
             case R.id.bt_wechart_share:
-
                 IShareManager wechtShareManager = new WechatShareManager(this);
-                wechtShareManager.share(new ShareContentText("test"), WechatShareManager.WEIXIN_SHARE_TYPE_TALK);
+                Bitmap image = ((BitmapDrawable)getResources().getDrawable(R.drawable.blank_bg)).getBitmap();
+                wechtShareManager.share(new ShareContentWebpage("英语流利说", "test", "http://www.liulishuo.com",
+                        null,image), WechatShareManager.WEIXIN_SHARE_TYPE_TALK);
                 break;
         }
     }

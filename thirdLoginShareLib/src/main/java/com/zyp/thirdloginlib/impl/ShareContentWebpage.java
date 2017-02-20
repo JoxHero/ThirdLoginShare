@@ -1,6 +1,8 @@
 package com.zyp.thirdloginlib.impl;
 
 
+import android.graphics.Bitmap;
+
 import com.zyp.thirdloginlib.common.ShareConstants;
 
 /**
@@ -17,12 +19,15 @@ public class ShareContentWebpage extends ShareContent {
 
     private String imageUrl;
 
+    private Bitmap imageBitMap;
+
     public ShareContentWebpage(String title, String content,
-                               String url, String imageUrl) {
+                               String url, String imageUrl,Bitmap imageBitMap) {
         this.title = title;
         this.content = content;
         this.url = url;
         this.imageUrl = imageUrl;
+        this.imageBitMap = imageBitMap;
     }
 
     @Override
@@ -53,4 +58,11 @@ public class ShareContentWebpage extends ShareContent {
     public String getMusicUrl() {
         return null;
     }
+
+    @Override
+    public Bitmap getImageBitMap() {
+        return imageBitMap;
+    }
+
+
 }

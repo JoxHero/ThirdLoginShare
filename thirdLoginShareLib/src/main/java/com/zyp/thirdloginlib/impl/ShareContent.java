@@ -1,5 +1,7 @@
 package com.zyp.thirdloginlib.impl;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by echo on 5/18/15.
  */
@@ -40,5 +42,11 @@ public abstract class ShareContent {
      * 音频url
      */
     public abstract String getMusicUrl();
+
+    /**
+     * 本地图片
+     * @return
+     */
+    public abstract Bitmap getImageBitMap();
 
 }
