@@ -56,9 +56,9 @@ public class QQShareManager implements IShareManager {
         params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE,
                 QQShare.SHARE_TO_QQ_TYPE_APP);
         params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, shareContent.getURL());
-        ArrayList<String> imageUrls = new ArrayList<String>();
-        imageUrls.add(shareContent.getImageUrl());
-        params.putStringArrayList(QQShare.SHARE_TO_QQ_IMAGE_URL, imageUrls);
+       /* ArrayList<String> imageUrls = new ArrayList<String>();
+        imageUrls.add(shareContent.getImageUrl());*/
+        params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, shareContent.getImageUrl());
         doShareToQQ(activity, params);
     }
 

@@ -133,12 +133,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.bt_qq_share:
                 qqShareManager = new QQShareManager(this);
                 qqShareManager.share(new ShareContentWebpage("英语流利说", "test", "http://www.liulishuo.com",
-                        "http://img.zlw.com/avatar/2017/01/18/148472941515.png",null), QQShareManager.QQ_SHARE_TYPE);
+                        "https://mgw.zlw.com/all/icon/zhongliang_financial_icon.png",null), QQShareManager.QQ_SHARE_TYPE);
                 break;
             case R.id.bt_qq_qzone_share:
                 qqShareManager = new QQShareManager(this);
                 qqShareManager.share(new ShareContentWebpage("英语流利说", "test", "http://www.liulishuo.com",
-                        "http://img.zlw.com/avatar/2017/01/18/148472941515.png",null), QQShareManager.QZONE_SHARE_TYPE);
+                        "https://mgw.zlw.com/all/icon/zhongliang_financial_icon.png",null), QQShareManager.QZONE_SHARE_TYPE);
                 break;
             case R.id.bt_wechart_login:
 
