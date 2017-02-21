@@ -7,6 +7,10 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.text.TextUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -20,9 +24,10 @@ public class BitmapUtil {
     public static Bitmap getBitmapFromUrl(String imageUrl) {
         Bitmap bmp = null;
         try {
-            if (!TextUtils.isEmpty(imageUrl) && imageUrl.startsWith("http")) {
+            if (!TextUtils.isEmpty(imageUrl) && imageUrl.startsWith("https")) {
                 URL url = new URL(imageUrl);
                 bmp = BitmapFactory.decodeStream(url.openStream());
+                //bmp = BitmapUtil.decodeUriAsBitmapFromNet(url);
             } else {
                 bmp = BitmapFactory.decodeFile(imageUrl);
             }
@@ -68,5 +73,35 @@ public class BitmapUtil {
         canvas.drawBitmap(source, null, targetRect, paint);
 
         return dest;
+    }
+
+    /**
+     * 根据图片的url路径获得Bitmap对象
+     * @param url
+     * @return
+     */
+    public static Bitmap decodeUriAsBitmapFromNet(String url) {
+        URL fileUrl = null;
+        Bitmap bitmap = null;
+
+        try {
+            fileUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            HttpURLConnection conn = (HttpURLConnection) fileUrl
+                    .openConnection();
+            conn.setDoInput(true);
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+
     }
 }

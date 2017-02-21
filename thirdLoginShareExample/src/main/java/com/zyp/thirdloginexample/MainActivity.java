@@ -2,6 +2,7 @@ package com.zyp.thirdloginexample;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -104,9 +105,9 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case R.id.bt_sina_share:
-
                 IShareManager sinaShareManager = new WeiboShareManager(this);
-                sinaShareManager.share(new ShareContentText("test"), WeiboShareManager.WEIBO_SHARE_TYPE);
+                Bitmap  bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_logo);
+                sinaShareManager.share(new ShareContentWebpage(getString(R.string.app_name), "我在中量金融操盘，盈利打败98%用户！不服来战~", "https://www.baidu.com", "https://mgw.zlw.com/all/icon/zhongliang_financial_icon.png",bitmap), WeiboShareManager.WEIBO_SHARE_TYPE);
                 break;
             case R.id.bt_qq_login:
 

@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 import com.sina.weibo.sdk.api.ImageObject;
 import com.sina.weibo.sdk.api.MusicObject;
@@ -20,11 +22,14 @@ import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.utils.Utility;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.zyp.thirdloginlib.R;
 import com.zyp.thirdloginlib.ShareBlock;
 import com.zyp.thirdloginlib.common.ShareConstants;
 import com.zyp.thirdloginlib.impl.IShareManager;
 import com.zyp.thirdloginlib.impl.ShareContent;
+import com.zyp.thirdloginlib.util.BitmapUtil;
 import com.zyp.thirdloginlib.util.ShareUtil;
 
 /**
@@ -32,7 +37,7 @@ import com.zyp.thirdloginlib.util.ShareUtil;
  */
 public class WeiboShareManager implements IShareManager {
 
-
+    private final String TAG = "WeiboShareManager";
     private static String mSinaAppKey;
 
     public static final String SCOPE =
@@ -87,11 +92,52 @@ public class WeiboShareManager implements IShareManager {
         allInOneShare(mContext, request);
     }
 
-    private void shareWebPage(ShareContent shareContent) {
+    /*private void shareWebPage(ShareContent shareContent) {
 
         WeiboMultiMessage weiboMultiMessage = new WeiboMultiMessage();
         weiboMultiMessage.textObject = getTextObj(shareContent.getContent());
-        weiboMultiMessage.imageObject = getImageObj(shareContent.getImageUrl());
+        ImageObject imageObject = new ImageObject();
+        //Bitmap bmp = BitmapUtil.scaleCenterCrop(shareContent.getImageBitMap(),116,116);
+        Bitmap bmp = shareContent.getImageBitMap();
+        Log.d(TAG, "getImageObj: bmp is null : "+(bmp == null));
+        imageObject.setImageObject(bmp);
+        //weiboMultiMessage.imageObject = getImageObj(shareContent.getImageUrl());
+        weiboMultiMessage.imageObject = imageObject;
+        weiboMultiMessage.mediaObject = getWebpageObj(shareContent);
+        // 初始化从第三方到微博的消息请求
+        SendMultiMessageToWeiboRequest request = new SendMultiMessageToWeiboRequest();
+        // 用transaction唯一标识一个请求
+        request.transaction = ShareUtil.buildTransaction("sinawebpage");
+        request.multiMessage = weiboMultiMessage;
+        allInOneShare(mContext, request);
+
+    }*/
+
+    private void shareWebPage(ShareContent shareContent) {
+        WeiboMultiMessage weiboMultiMessage = new WeiboMultiMessage();
+        weiboMultiMessage.textObject = getTextObj(shareContent.getContent());
+        final ImageObject imageObject = new ImageObject();
+        Picasso.with(mContext).load(shareContent.getImageUrl())
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        Log.d(TAG, "onBitmapLoaded: bitmap is null : "+ (bitmap == null));
+                        imageObject.setImageObject(BitmapUtil.scaleCenterCrop(bitmap , 116 , 116));
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                        Log.d(TAG, "onBitmapFailed: ");
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        Log.d(TAG, "onPrepareLoad: placeHolderDrawable is null : " + (placeHolderDrawable == null));
+                    }
+                });
+        //weiboMultiMessage.imageObject = getImageObj(shareContent.getImageUrl());
+        weiboMultiMessage.imageObject = imageObject;
+        weiboMultiMessage.mediaObject = getWebpageObj(shareContent);
         // 初始化从第三方到微博的消息请求
         SendMultiMessageToWeiboRequest request = new SendMultiMessageToWeiboRequest();
         // 用transaction唯一标识一个请求
@@ -132,6 +178,7 @@ public class WeiboShareManager implements IShareManager {
     private ImageObject getImageObj(String imageUrl) {
         ImageObject imageObject = new ImageObject();
         Bitmap bmp = BitmapFactory.decodeFile(imageUrl);
+        Log.d(TAG, "getImageObj: bmp is null : "+(bmp == null));
         imageObject.setImageObject(bmp);
         return imageObject;
     }
@@ -141,15 +188,33 @@ public class WeiboShareManager implements IShareManager {
      *
      * @return 多媒体（网页）消息对象。
      */
-    private WebpageObject getWebpageObj(ShareContent shareContent) {
-        WebpageObject mediaObject = new WebpageObject();
+    private WebpageObject getWebpageObj(final ShareContent shareContent) {
+        final WebpageObject mediaObject = new WebpageObject();
         mediaObject.identify = Utility.generateGUID();
         mediaObject.title = shareContent.getTitle();
         mediaObject.description = shareContent.getContent();
+        //Bitmap bmp = ShareUtil.extractThumbNail(shareContent.getImageUrl(), 150, 150, true);
+       // final Bitmap bmp = shareContent.getImageBitMap();
+        //Log.d(TAG, "getWebpageObj: bmp is null : "+(bmp == null));
+        Picasso.with(mContext).load(shareContent.getImageUrl())
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        Log.d(TAG, "getWebpageObj onBitmapLoaded: bitmap is null : "+ (bitmap == null));
+                        mediaObject.setThumbImage(BitmapUtil.scaleCenterCrop(bitmap , 116 , 116));
+                    }
 
-        // 设置 Bitmap 类型的图片到视频对象里
-        Bitmap bmp = ShareUtil.extractThumbNail(shareContent.getImageUrl(), 150, 150, true);
-        mediaObject.setThumbImage(bmp);
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                        Log.d(TAG, "getWebpageObj onBitmapFailed: ");
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        Log.d(TAG, "getWebpageObj onPrepareLoad: placeHolderDrawable is null : " + (placeHolderDrawable == null));
+                    }
+                });
+        //mediaObject.setThumbImage(BitmapUtil.scaleCenterCrop(bmp , 116 , 116));
         mediaObject.actionUrl = shareContent.getURL();
         mediaObject.defaultText = shareContent.getContent();
         return mediaObject;

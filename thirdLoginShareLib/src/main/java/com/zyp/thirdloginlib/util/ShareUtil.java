@@ -2,10 +2,12 @@ package com.zyp.thirdloginlib.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 
 import junit.framework.Assert;
 
 import java.io.ByteArrayOutputStream;
+import java.net.URL;
 
 /**
  * Created by echo on 5/18/15.
@@ -35,7 +37,21 @@ public class ShareUtil {
         }
     }
 
+    public static Bitmap getBitmapFromUrl(String imageUrl) {
+        Bitmap bmp = null;
+        try {
+            if (!TextUtils.isEmpty(imageUrl) && imageUrl.startsWith("https")) {
+                URL url = new URL(imageUrl);
+                bmp = BitmapFactory.decodeStream(url.openStream());
+                //bmp = BitmapUtil.decodeUriAsBitmapFromNet(imageUrl);
+            } else {
+                bmp = extractThumbNail(imageUrl,150, 150, true);
+            }
+        } catch (Throwable ex) {
 
+        }
+        return bmp;
+    }
 
     private static final int MAX_DECODE_PICTURE_SIZE = 1920 * 1440;
     public static Bitmap extractThumbNail(final String path, final int height, final int width, final boolean crop) {
