@@ -51,11 +51,11 @@ public class QQShareManager implements IShareManager {
 
     private void shareWebPageToQQ(Activity activity, ShareContent shareContent) {
         Bundle params = new Bundle();
+        params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
         params.putString(QQShare.SHARE_TO_QQ_TITLE, shareContent.getTitle());
         params.putString(QQShare.SHARE_TO_QQ_SUMMARY, shareContent.getContent());
-        params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE,
-                QQShare.SHARE_TO_QQ_TYPE_APP);
         params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, shareContent.getURL());
+        //params.putString(QQShare.SHARE_TO_QQ_APP_NAME,shareContent.getTitle());
        /* ArrayList<String> imageUrls = new ArrayList<String>();
         imageUrls.add(shareContent.getImageUrl());*/
         params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, shareContent.getImageUrl());

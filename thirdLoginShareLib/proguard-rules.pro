@@ -19,6 +19,8 @@
 -keep class com.zyp.thirdloginlib.data.resultModel.** {*;}
 -keep class com.zyp.thirdloginlib.qq.model.** {*;}
 -keep class com.zyp.thirdloginlib.sina.model.** {*;}
+-keep class com.zyp.thirdloginlib.util.** {*;}
+-keep class com.zyp.thirdloginlib.impl.** {*;}
 
 -keep class com.google.**{*;}
 -keepclassmembers class * implements java.io.Serializable {
