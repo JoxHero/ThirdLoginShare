@@ -2,7 +2,6 @@ package com.zyp.thirdloginexample;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -12,17 +11,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.sina.weibo.sdk.auth.sso.SsoHandler;
+import com.sina.weibo.sdk.api.share.BaseResponse;
+import com.sina.weibo.sdk.api.share.IWeiboHandler;
+import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
+import com.sina.weibo.sdk.constant.WBConstants;
 import com.tencent.tauth.Tencent;
 import com.zyp.thirdloginlib.ShareBlock;
-import com.zyp.thirdloginlib.common.ShareConstants;
 import com.zyp.thirdloginlib.data.resultModel.AccountResult;
 import com.zyp.thirdloginlib.data.resultModel.WeChartUserInfoResult;
 import com.zyp.thirdloginlib.impl.ILoginManager;
 import com.zyp.thirdloginlib.impl.IShareManager;
 import com.zyp.thirdloginlib.impl.PlatformActionListener;
-import com.zyp.thirdloginlib.impl.ShareContentText;
 import com.zyp.thirdloginlib.impl.ShareContentWebpage;
 import com.zyp.thirdloginlib.qq.QQLoginManager;
 import com.zyp.thirdloginlib.qq.QQShareManager;
@@ -35,13 +36,12 @@ import com.zyp.thirdloginlib.wechart.WechatShareManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.HashMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IWeiboHandler.Response{
     private final String TAG = "MainActivity";
     @Bind(R.id.bt_sina_login)
     Button btSinaLogin;
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private QQLoginManager qqLoginManager;
     private QQShareManager qqShareManager;
     private WeiboShareManager sinaShareManager;
-
+    private IWeiboShareAPI sinaApi;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initBlock();
         sinaShareManager = new WeiboShareManager(this);
+        sinaApi = sinaShareManager.getSinaApi();
+        //if (savedInstanceState != null) {
+            boolean isShare = sinaApi.handleWeiboResponse(getIntent(), this);
+            Log.d(TAG, "onCreate: isShare : "+isShare);
+       // }
     }
 
     private void initBlock() {
@@ -77,6 +82,18 @@ public class MainActivity extends AppCompatActivity {
         ShareBlock.getInstance().initWeiboRedriectUrl(Constants.SINA_REDIRECT_URL);
         ShareBlock.getInstance().initQQ(Constants.QQ_APP_ID);
         ShareBlock.getInstance().initWechat(Constants.WECHAT_APP_ID, Constants.WECHAT_SECRET);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        // 从当前应用唤起微博并进行分享后，返回到当前应用时，需要在此处调用该函数
+        // 来接收微博客户端返回的数据；执行成功，返回 true，并调用
+        // {@link IWeiboHandler.Response#onResponse}；失败返回 false，不调用上述回调
+        boolean isShare = sinaApi.handleWeiboResponse(intent, this);
+        Log.d(TAG, "onNewIntent: isShare : "+isShare);
+
     }
 
     @OnClick({R.id.bt_sina_login, R.id.bt_sina_share, R.id.bt_qq_login, R.id.bt_qq_share, R.id.bt_qq_qzone_share,R.id.bt_wechart_login, R.id.bt_wechart_share})
@@ -220,5 +237,25 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return mPathTemp;
+    }
+
+    @Override
+    public void onResponse(BaseResponse baseResponse) {
+        Log.d(TAG, "onResponse: errmsg " +baseResponse.errMsg);
+        if(baseResponse!= null){
+            switch (baseResponse.errCode) {
+                case WBConstants.ErrorCode.ERR_OK:
+                    Toast.makeText(this, R.string.weibosdk_demo_toast_share_success, Toast.LENGTH_LONG).show();
+                    break;
+                case WBConstants.ErrorCode.ERR_CANCEL:
+                    Toast.makeText(this, R.string.weibosdk_demo_toast_share_canceled, Toast.LENGTH_LONG).show();
+                    break;
+                case WBConstants.ErrorCode.ERR_FAIL:
+                    Toast.makeText(this,
+                            getString(R.string.weibosdk_demo_toast_share_failed) + "Error Message: " + baseResponse.errMsg,
+                            Toast.LENGTH_LONG).show();
+                    break;
+            }
+        }
     }
 }

@@ -132,6 +132,7 @@ public class WeiboShareManager implements IShareManager {
                         // 用transaction唯一标识一个请求
                         request.transaction = ShareUtil.buildTransaction("sinawebpage");
                         request.multiMessage = weiboMultiMessage;
+                       // mSinaAPI.sendRequest((Activity) mContext,request);
                         allInOneShare(mContext, request);
                     }
 
@@ -250,22 +251,24 @@ public class WeiboShareManager implements IShareManager {
     private void allInOneShare(final Context context, SendMultiMessageToWeiboRequest request) {
 
         AuthInfo authInfo = new AuthInfo(context, mSinaAppKey, REDIRECT_URL, SCOPE);
-        Oauth2AccessToken accessToken = AccessTokenKeeper.readAccessToken(context);
+        Oauth2AccessToken accessToken = AccessTokenKeeper.readAccessToken(context.getApplicationContext());
         String token = "";
         if (accessToken != null) {
             token = accessToken.getToken();
         }
 
-        mSinaAPI.sendRequest((Activity) context, request, authInfo, token, new WeiboAuthListener() {
+        boolean issend = mSinaAPI.sendRequest((Activity) context, request, authInfo, token, new WeiboAuthListener() {
 
             @Override
             public void onWeiboException(WeiboException arg0) {
+                Log.d(TAG, "onWeiboException: ");
                 Toast.makeText(context, context.getString(
                         R.string.share_failed), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onComplete(Bundle bundle) {
+                Log.d(TAG, "onComplete: ");
                 Oauth2AccessToken newToken = Oauth2AccessToken.parseAccessToken(bundle);
                 AccessTokenKeeper.writeAccessToken(context, newToken);
                 Toast.makeText(context, context.getString(
@@ -274,12 +277,13 @@ public class WeiboShareManager implements IShareManager {
 
             @Override
             public void onCancel() {
+                Log.d(TAG, "onCancel: ");
                 Toast.makeText(context, context.getString(
                         R.string.share_cancel), Toast.LENGTH_SHORT).show();
 
             }
         });
-
+        Log.d(TAG, "allInOneShare: issend : "+issend);
     }
 
 
@@ -305,5 +309,9 @@ public class WeiboShareManager implements IShareManager {
                 shareMusic(shareContent);
                 break;
         }
+    }
+
+    public IWeiboShareAPI getSinaApi() {
+        return mSinaAPI;
     }
 }
